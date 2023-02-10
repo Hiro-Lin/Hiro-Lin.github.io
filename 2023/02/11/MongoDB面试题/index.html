@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>MongoDB面试题 | 林多鱼的博客</title>
+  <meta name="description" content="1.什么是MongoDB MongoDB是一个文档数据库，提供好的性能，领先的非关系型数据库。采用BSON存储文档数据。BSON（）是一种类json的一种二进制形式的存储格式，简称Binary JSON.相对于json多了date类型和二进制数组。 2.MongoDB的优势有哪些 面向文档的存储：以 JSON 格式的文档保存数据。任何属性都可以建立索引。复制以及高可扩展性。自动分片。丰富的查询功能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MongoDB面试题">
+<meta property="og:url" content="https://hiro-lin.github.io/2023/02/11/MongoDB%E9%9D%A2%E8%AF%95%E9%A2%98/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="1.什么是MongoDB MongoDB是一个文档数据库，提供好的性能，领先的非关系型数据库。采用BSON存储文档数据。BSON（）是一种类json的一种二进制形式的存储格式，简称Binary JSON.相对于json多了date类型和二进制数组。 2.MongoDB的优势有哪些 面向文档的存储：以 JSON 格式的文档保存数据。任何属性都可以建立索引。复制以及高可扩展性。自动分片。丰富的查询功能">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hiro-lin.github.io/images/SSL%20%E5%92%8C%20TCPIP%20%E7%A4%BA%E6%84%8F%E5%9B%BE.png">
+<meta property="article:published_time" content="2023-02-10T17:27:17.000Z">
+<meta property="article:modified_time" content="2023-02-10T17:38:41.602Z">
+<meta property="article:author" content="林多鱼">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hiro-lin.github.io/images/SSL%20%E5%92%8C%20TCPIP%20%E7%A4%BA%E6%84%8F%E5%9B%BE.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://hiro-lin.github.io/2023/02/11/MongoDB%E9%9D%A2%E8%AF%95%E9%A2%98/index.html">
+  
+  
+    <link rel="icon" href="/logo.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/Hiro-Lin" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">林多鱼</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">游戏开发工程师&amp;后端工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> HangZhou, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Hiro-Lin" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/" rel="tag">HTTP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTPS/" rel="tag">HTTPS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IP/" rel="tag">IP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP/" rel="tag">TCP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UDP/" rel="tag">UDP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/HTTP/" style="font-size: 13px;">HTTP</a> <a href="/tags/HTTPS/" style="font-size: 13px;">HTTPS</a> <a href="/tags/IP/" style="font-size: 13px;">IP</a> <a href="/tags/TCP/" style="font-size: 13px;">TCP</a> <a href="/tags/UDP/" style="font-size: 13px;">UDP</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 14px;">面试题</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">二月 2023</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/11/go%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/" class="title">go常见面试题</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-10T18:07:32.000Z" itemprop="datePublished">2023-02-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/11/go%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" class="title">go常用设计模式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-10T17:51:34.000Z" itemprop="datePublished">2023-02-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/11/MongoDB%E9%9D%A2%E8%AF%95%E9%A2%98/" class="title">MongoDB面试题</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-10T17:27:17.000Z" itemprop="datePublished">2023-02-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/10/TCP-IP%E5%8D%8F%E8%AE%AE%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/" class="title">TCP/IP协议常见面试题</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-10T13:00:31.000Z" itemprop="datePublished">2023-02-10</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/10/http%E4%B8%8Ehttps%E7%9A%84%E5%8C%BA%E5%88%AB/" class="title">http与https的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-10T11:43:20.000Z" itemprop="datePublished">2023-02-10</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-MongoDB面试题" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      MongoDB面试题
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2023/02/11/MongoDB%E9%9D%A2%E8%AF%95%E9%A2%98/" class="article-date">
+	  <time datetime="2023-02-10T17:27:17.000Z" itemprop="datePublished">2023-02-11</time>
+	</a>
+</span>
+        
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2023/02/11/MongoDB%E9%9D%A2%E8%AF%95%E9%A2%98/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p><strong>1.什么是MongoDB</strong></p>
+<p>MongoDB是一个文档数据库，提供好的性能，领先的非关系型数据库。采用BSON存储文档数据。<br>BSON（）是一种类json的一种二进制形式的存储格式，简称Binary JSON.<br>相对于json多了date类型和二进制数组。</p>
+<p><strong>2.MongoDB的优势有哪些</strong></p>
+<p>面向文档的存储：以 JSON 格式的文档保存数据。<br>任何属性都可以建立索引。<br>复制以及高可扩展性。<br>自动分片。<br>丰富的查询功能。<br>快速的即时更新。</p>
+<p><strong>3.什么是数据库</strong></p>
+<p>　　数据库可以看成是一个电子化的文件柜,用户可以对文件中的数据运行新增、检索、更新、删除等操作。数据库是一个<br>所有集合的容器，在文件系统中每一个数据库都有一个相关的物理文件。</p>
+<p><strong>4.什么是集合(表)</strong></p>
+<p>集合就是一组 MongoDB 文档。它相当于关系型数据库（RDBMS）中的表这种概念。集合位于单独的一个数据库中。<br>一个集合内的多个文档可以有多个不同的字段。一般来说，集合中的文档都有着相同或相关的目的。</p>
+<p><strong>5.什么是文档(记录)</strong></p>
+<p>　　文档由一组key value组成。文档是动态模式,这意味着同一集合里的文档不需要有相同的字段和结构。在关系型<br>数据库中table中的每一条记录相当于MongoDB中的一个文</p>
+<p><strong>6.MongoDB和关系型数据库术语对比图</strong></p>
+<p><img src="/./../images/SSL%20%E5%92%8C%20TCPIP%20%E7%A4%BA%E6%84%8F%E5%9B%BE.png" alt="MongoDB和关系型数据库术语对比图" title="MongoDB和关系型数据库术语对比图"></p>
+<p><strong>7.什么是非关系型数据库</strong></p>
+<p>　　非关系型数据库的显著特点是不使用SQL作为查询语言，数据存储不需要特定的表格模式。</p>
+<p><strong>8 为什么用MOngoDB？</strong></p>
+<p>架构简单<br>没有复杂的连接<br>深度查询能力,MongoDB支持动态查询。<br>容易调试<br>容易扩展<br>不需要转化&#x2F;映射应用对象到数据库对象<br>使用内部内存作为存储工作区,以便更快的存取数据。</p>
+<p><strong>9 在哪些场景使用MongoDB</strong></p>
+<p>大数据<br>内容管理系统<br>移动端Apps<br>数据管理</p>
+<p><strong>10 MongoDB中的命名空间是什么意思?</strong></p>
+<p>mongodb存储bson对象在丛集(collection)中.数据库名字和丛集名字以句点连结起来叫做名字空间(namespace). 　　一个集合命名空间又有多个数据域(extent)，集合命名空间里存储着集合的元数据，比如集合名称，集合的<br>第一个数据域和最后一个数据域的位置等等。而一个数据域由若干条文档(document)组成，每个数据域都有一个<br>头部，记录着第一条文档和最后一条文档的为知，以及该数据域的一些元数据。extent之间，document之间通过<br>双向链表连接。 索引的存储数据结构是B树，索引命名空间存储着对B树的根节点的指针。</p>
+<p><strong>11 monogodb 中的分片什么意思</strong></p>
+<p>　　分片是将数据水平切分到不同的物理节点。当应用数据越来越大的时候，数据量也会越来越大。当数据量增长<br>时，单台机器有可能无法存储数据或可接受的读取写入吞吐量。利用分片技术可以添加更多的机器来应对数据量增加<br>以及读写操作的要求。</p>
+<p><strong>12 为什么要在MongoDB中使用分析器</strong></p>
+<p>　　mongodb中包括了一个可以显示数据库中每个操作性能特点的数据库分析器.通过这个分析器你可以找到比预期慢<br>的查询(或写操作);利用这一信息,比如,可以确定是否需要添加索引.</p>
+<p><strong>13 .MongoDB支持主键外键关系吗</strong></p>
+<p>　　默认MongoDB不支持主键和外键关系。 用Mongodb本身的API需要硬编码才能实现外键关联，不够直观且难度<br>较大</p>
+<p><strong>14 MongoDB支持哪些数据类型</strong></p>
+<p>String<br>Integer<br>Double<br>Boolean<br>Object<br>Object ID<br>Arrays<br>Min&#x2F;Max Keys<br>Datetime<br>Code<br>Regular Expression等</p>
+<p><strong>15 为什么要在MongoDB中用”Code”数据类型</strong></p>
+<p>“Code”类型用于在文档中存储 JavaScript 代码。</p>
+<p><strong>16 为什么要在MongoDB中用”Regular Expression”数据类型</strong></p>
+<p>“Regular Expression”类型用于在文档中存储正则表达式</p>
+<p><strong>17 为什么在MongoDB中使用”Object ID”数据类型</strong></p>
+<p>“ObjectID”数据类型用于存储文档id</p>
+<p><strong>18”ObjectID”有哪些部分组成</strong></p>
+<p>一共有四部分组成:时间戳、客户端ID、客户进程ID、三个字节的增量计数器</p>
+<p><strong>19 在MongoDb中什么是索引</strong></p>
+<p>索引用于高效的执行查询,没有索引的MongoDB将扫描整个集合中的所有文档,这种扫描效率很低,需要处理大量<br>的数据. 索引是一种特殊的数据结构,将一小块数据集合保存为容易遍历的形式.索引能够存储某种特殊字段或字段集的<br>值,并按照索引指定的方式将字段值进行排序.</p>
+<p><strong>20 如何添加索引</strong></p>
+<p>使用db.collection.createIndex()在集合中创建一个索引</p>
+<p><strong>21.如何查询集合中的文档</strong></p>
+<p>db.collectionName.find({key:value})</p>
+<p><strong>22用什么方法可以格式化输出结果</strong></p>
+<p>db.collectionName.find().pretty()</p>
+<p><strong>23 如何使用”AND”或”OR”条件循环查询集合中的文档</strong></p>
+<p>db.mycol.find( { $or: [ {key1: value1}, {key2:value2} ] } ).pretty()</p>
+<p><strong>24 更新数据</strong></p>
+<p>db.collectionName.update({key:value},{$set:{newkey:newValue}})</p>
+<p><strong>25 如何删除文档</strong></p>
+<p>db.collectionName.remove({key:value})</p>
+<p><strong>26 在MongoDB中如何排序</strong></p>
+<p>并使用 1 和 -1 来指定排序方式，其中 1 表示升序，而 -1 表示降序。</p>
+<p>db.connectionName.find({key:value}).sort({columnName:1})</p>
+<p><strong>27 什么是聚合</strong></p>
+<p>　　聚合操作能够处理数据记录并返回计算结果。聚合操作能将多个文档中的值组合起来，对成组数据执行各种操作，返回单一的结果。它相当于 SQL 中的 count(*) 组合 group by。对于 MongoDB 中的聚合操作，应该使用aggregate()方法。</p>
+<p>db.COLLECTION_NAME.aggregate(AGGREGATE_OPERATION)</p>
+<p><strong>28 在MongoDB中什么是副本集（避免单点故障）</strong></p>
+<p>在MongoDB中副本集由一组MongoDB实例组成，包括一个主节点多个次节点，MongoDB客户端的所有数据都<br>写入主节点(Primary),副节点从主节点同步写入数据，以保持所有复制集内存储相同的数据，提高数据可用性。</p>
+<p><strong>29 什么是NoSQL数据库？NoSQL和RDBMS有什么区别？在哪些情况下使用和不使用NoSQL数据库？</strong></p>
+<p>　NoSQL是非关系型数据库，NoSQL &#x3D; Not Only SQL。<br>关系型数据库采用的结构化的数据，NoSQL采用的是键值对的方式存储数据。 在处理非结构化&#x2F;半结构化的大数据时；在水平方向上进行扩展时；随时应对动态增加的数据项时可以优先考虑<br>使用NoSQL数据库。 在考虑数据库的成熟度；支持；分析和商业智能；管理及专业性等问题时，应优先考虑关系型数据库。</p>
+<p><strong>30 MongoDB支持存储过程吗？如果支持的话，怎么用？</strong></p>
+<p>MongoDB支持存储过程，它是javascript写的，保存在db.system.js表中。</p>
+<p><strong>31如何理解MongoDB中的GridFS机制，MongoDB为何使用GridFS来存储文件？</strong></p>
+<p>　　GridFS是一种将大型文件存储在MongoDB中的文件规范。使用GridFS可以将大文件分隔成多个小文档存放，这样我们能够有效的保存大文档，而且解决了BSON对象有限制的问题。</p>
+<p><strong>32 为什么MongoDB的数据文件很大？</strong></p>
+<p>　　MongoDB采用的预分配空间的方式来防止文件碎片。</p>
+<p><strong>33 当更新一个正在被迁移的块（Chunk）上的文档时会发生什么？</strong></p>
+<p>　　更新操作会立即发生在旧的块（Chunk）上，然后更改才会在所有权转移前复制到新的分片上。</p>
+<p><strong>34 MongoDB在A:{B,C}上建立索引，查询A:{B,C}和A:{C,B}都会使用索引吗？</strong></p>
+<p>　　不会，只会在A:{B,C}上使用索引。</p>
+<p><strong>35 mongodb成为最好nosql数据库的原因是什么?</strong></p>
+<p>　　面向文件的 高性能 高可用性 易扩展性 丰富的查询语言</p>
+<p><strong>36 如果用户移除对象的属性,该属性是否从存储层中删除?</strong></p>
+<p>　　是的,用户移除属性然后对象会重新保存(re-save()).</p>
+<p><strong>37 允许空值null吗?</strong></p>
+<p>　　对于对象成员而言,是的.然而用户不能够添加空值(null)到数据库丛集(collection)因为空值不是对象.然而用户能够添加空对象{}.</p>
+<p><strong>38 更新操作立刻fsync到磁盘?</strong></p>
+<p>　　不会,磁盘写操作默认是延迟执行的.写操作可能在两三秒(默认在60秒内)后到达磁盘.例如,如果一秒内数据库收到一千个对一个对象递增的操作,仅刷新磁盘一次.</p>
+<p><strong>39 如何执行事务&#x2F;加锁?</strong></p>
+<p>　　mongodb没有使用传统的锁或者复杂的带回滚的事务,因为它设计的宗旨是轻量,快速以及可预计的高性能.可以把它类比成mysql mylsam的自动提交模式.通过精简对事务的支持,性能得到了提升,特别是在一个可能会穿过多个服务器的系统里.</p>
+<p><strong>40 启用备份故障恢复需要多久?</strong></p>
+<p>　　从备份数据库声明主数据库宕机到选出一个备份数据库作为新的主数据库将花费10到30秒时间.这期间在主数据库上的操作将会失败–包括写入和强一致性读取(strong consistent read)操作.然而,你还能在第二数据库上执行最终一致性查询(eventually consistent query)(在slaveok模式下),即使在这段时间里.</p>
+<p><strong>41 什么是master或primary?</strong></p>
+<p>　　它是当前备份集群(replica set)中负责处理所有写入操作的主要节点&#x2F;成员.在一个备份集群中,当失效备援(failover)事件发生时,一个另外的成员会变成primary.</p>
+<p><strong>42 我应该启动一个集群分片(sharded)还是一个非集群分片的 mongodb 环境?</strong></p>
+<p>　　(数据量大用集群分片,数据量小用非集群)</p>
+<p>　　为开发便捷起见,我们建议以非集群分片(unsharded)方式开始一个 mongodb 环境,除非一台服务器不足以存放你的初始数据集.从非集群分片升级到集群分片(sharding)是无缝的,所以在你的数据集还不是很大的时候没必要考虑集群分片(sharding).</p>
+<p><strong>43 分片(sharding)和复制(replication)是怎样工作的?</strong></p>
+<p>　　每一个分片(shard)是一个分区数据的逻辑集合.分片可能由单一服务器或者集群组成,我们推荐为每一个分片(shard)使用集群.</p>
+<p><strong>44数据在什么时候才会扩展到多个分片(shard)里?</strong></p>
+<p>　　mongodb 分片是基于区域(range)的.所以一个集合(collection)中的所有的对象都被存放到一个块(chunk)中.只有当存在多余一个块的时候,才会有多个分片获取数据的选项.现在,每个默认块的大小是 64mb,所以你需要至少 64 mb 空间才可以实施一个迁移.</p>
+<p><strong>45 当我试图更新一个正在被迁移的块(chunk)上的文档时会发生什么?</strong></p>
+<p>　　更新操作会立即发生在旧的分片(shard)上,然后更改才会在所有权转移(ownership transfers)前复制到新的分片上.</p>
+<p><strong>46 如果在一个分片(shard)停止或者很慢的时候,我发起一个查询会怎样?</strong></p>
+<p>　　如果一个分片(shard)停止了,除非查询设置了“partial”选项,否则查询会返回一个错误.如果一个分片(shard)响应很慢,mongodb则会等待它的响应.</p>
+<p><strong>47 可以把movechunk目录里的旧文件删除吗?</strong></p>
+<p>　　没问题,这些文件是在分片(shard)进行均衡操作(balancing)的时候产生的临时文件.一旦这些操作已经完成,相关的临时文件也应该被删除掉.但目前清理工作是需要手动的,所以请小心地考虑再释放这些文件的空间.</p>
+<p><strong>48 如果块移动操作(movechunk)失败了,我需要手动清除部分转移的文档吗?</strong></p>
+<p>　　不需要,移动操作是一致(consistent)并且是确定性的(deterministic);一次失败后,移动操作会不断重试;当完成后,数据只会出现在新的分片里(shard).</p>
+<p><strong>49 mongodb是否支持事务</strong></p>
+<p>　　MongoDB 4.0的新特性——事务（Transactions）：MongoDB 是不支持事务的，因此开发者在需要用到事务的时候，不得不借用其他工具，在业务代码层面去弥补数据库的不足。</p>
+<p>　　事务和会话(Sessions)关联，一个会话同一时刻只能开启一个事务操作，当一个会话断开，这个会话中的事务也会结束。</p>
+<p>————————————————<br>版权声明：本文为CSDN博主「KangJinXuan」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/KangJinXuan/article/details/126936926">https://blog.csdn.net/KangJinXuan/article/details/126936926</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://hiro-lin.github.io/2023/02/11/MongoDB%E9%9D%A2%E8%AF%95%E9%A2%98/" title="MongoDB面试题" target="_blank" rel="external">https://hiro-lin.github.io/2023/02/11/MongoDB面试题/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/Hiro-Lin" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/Hiro-Lin" target="_blank"><span class="text-dark">林多鱼</span><small class="ml-1x">游戏开发工程师&amp;后端工程师</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2023/02/11/go%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="go常用设计模式"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2023/02/10/TCP-IP%E5%8D%8F%E8%AE%AE%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/" title="TCP/IP协议常见面试题"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.jpg" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Hiro-Lin" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        &copy; 2023 林多鱼
+        
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?6e1453ad1a087bffcfd9ee65e895675e";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>go常用设计模式 | 林多鱼的博客</title>
+  <meta name="description" content="1 创建型模式1.1 工厂方法模式❓问题描述：假设你正在开发一款物流管理应用。 最初版本只能处理卡车运输， 因此大部分代码都在位于名为 卡车的类中。 一段时间后， 这款应用变得极受欢迎。 你每天都能收到十几次来自海运公司的请求， 希望应用能够支持海上物流功能。 解决方案：我们抽象出一个物流工厂，然后分别实例化陆上，海上物流等工厂类，再生产对应产品。 首先写一个表示通用物流的接口： 1234type">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go常用设计模式">
+<meta property="og:url" content="https://hiro-lin.github.io/2023/02/11/go%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="1 创建型模式1.1 工厂方法模式❓问题描述：假设你正在开发一款物流管理应用。 最初版本只能处理卡车运输， 因此大部分代码都在位于名为 卡车的类中。 一段时间后， 这款应用变得极受欢迎。 你每天都能收到十几次来自海运公司的请求， 希望应用能够支持海上物流功能。 解决方案：我们抽象出一个物流工厂，然后分别实例化陆上，海上物流等工厂类，再生产对应产品。 首先写一个表示通用物流的接口： 1234type">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-02-10T17:51:34.000Z">
+<meta property="article:modified_time" content="2023-02-10T18:04:01.363Z">
+<meta property="article:author" content="林多鱼">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://hiro-lin.github.io/2023/02/11/go%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/index.html">
+  
+  
+    <link rel="icon" href="/logo.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/Hiro-Lin" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">林多鱼</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">游戏开发工程师&amp;后端工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> HangZhou, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Hiro-Lin" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/" rel="tag">HTTP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTPS/" rel="tag">HTTPS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IP/" rel="tag">IP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP/" rel="tag">TCP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UDP/" rel="tag">UDP</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/HTTP/" style="font-size: 13px;">HTTP</a> <a href="/tags/HTTPS/" style="font-size: 13px;">HTTPS</a> <a href="/tags/IP/" style="font-size: 13px;">IP</a> <a href="/tags/TCP/" style="font-size: 13px;">TCP</a> <a href="/tags/UDP/" style="font-size: 13px;">UDP</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 14px;">面试题</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">二月 2023</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/11/go%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/" class="title">go常见面试题</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-10T18:07:32.000Z" itemprop="datePublished">2023-02-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/11/go%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" class="title">go常用设计模式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-10T17:51:34.000Z" itemprop="datePublished">2023-02-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/11/MongoDB%E9%9D%A2%E8%AF%95%E9%A2%98/" class="title">MongoDB面试题</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-10T17:27:17.000Z" itemprop="datePublished">2023-02-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/10/TCP-IP%E5%8D%8F%E8%AE%AE%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/" class="title">TCP/IP协议常见面试题</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-10T13:00:31.000Z" itemprop="datePublished">2023-02-10</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/10/http%E4%B8%8Ehttps%E7%9A%84%E5%8C%BA%E5%88%AB/" class="title">http与https的区别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-10T11:43:20.000Z" itemprop="datePublished">2023-02-10</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-go常用设计模式" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      go常用设计模式
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2023/02/11/go%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" class="article-date">
+	  <time datetime="2023-02-10T17:51:34.000Z" itemprop="datePublished">2023-02-11</time>
+	</a>
+</span>
+        
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2023/02/11/go%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="1-创建型模式"><a href="#1-创建型模式" class="headerlink" title="1 创建型模式"></a>1 创建型模式</h1><h2 id="1-1-工厂方法模式"><a href="#1-1-工厂方法模式" class="headerlink" title="1.1 工厂方法模式"></a>1.1 工厂方法模式</h2><p>❓问题描述：假设你正在开发一款物流管理应用。 最初版本只能处理卡车运输， 因此大部分代码都在位于名为 卡车的类中。</p>
+<p>一段时间后， 这款应用变得极受欢迎。 你每天都能收到十几次来自海运公司的请求， 希望应用能够支持海上物流功能。</p>
+<p>解决方案：我们抽象出一个物流工厂，然后分别实例化陆上，海上物流等工厂类，再生产对应产品。</p>
+<p>首先写一个表示通用物流的接口：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">type iLogistics interface &#123;</span><br><span class="line">	setName(string)</span><br><span class="line">	getName() string</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>之后就是陆上物流的工厂类：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">type RoadLogistics struct &#123;</span><br><span class="line">	name string</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (r *RoadLogistics) setName(name string) &#123;</span><br><span class="line">	r.name = name</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (r *RoadLogistics) getName() string &#123;</span><br><span class="line">	return r.name</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var roadInstance iLogistics = (*RoadLogistics)(nil)  // 验证RoadLogistics是否实习了接口iLogistics</span><br></pre></td></tr></table></figure>
+<p>以及海上物流的工厂类，因为类似这里就省略了。</p>
+<p>之后就是具体产品了，比如陆上的有汽车，火车和高铁。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">type Vehicle struct &#123;</span><br><span class="line">	RoadLogistics</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func NewVehicle() (v *Vehicle) &#123;</span><br><span class="line">	v = new(Vehicle)</span><br><span class="line">	v.RoadLogistics = RoadLogistics&#123;</span><br><span class="line">		Name: &quot;vehicle&quot;,</span><br><span class="line">	&#125;</span><br><span class="line">	return v</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面是汽车的例子，我们再写一个火车的例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">type Train struct &#123;</span><br><span class="line">	RoadLogistics</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func NewTrain() (t *Train) &#123;</span><br><span class="line">	t = new(Train)</span><br><span class="line">	t.RoadLogistics = RoadLogistics&#123;</span><br><span class="line">		Name: &quot;train&quot;,</span><br><span class="line">	&#125;</span><br><span class="line">	return t</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后我们可以根据类别，直接初始化对应的类：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">func getLogistics(means string) (i iLogistics, err error)&#123;</span><br><span class="line">	if  means == &quot;vehicle&quot; &#123;</span><br><span class="line">		return NewVehicle(), nil</span><br><span class="line">	&#125;else if means == &quot;train&quot;&#123;</span><br><span class="line">		return NewTrain(), nil</span><br><span class="line">	&#125;</span><br><span class="line">	return nil, errors.New(&quot;unknown means of transportation&quot;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>客户端使用，直接调用getLogistics就好。</p>
+<h2 id="1-2-抽象工厂模式"><a href="#1-2-抽象工厂模式" class="headerlink" title="1.2 抽象工厂模式"></a>1.2 抽象工厂模式</h2><p>抽象工厂模式是一种创建型设计模式，它能创建一系列相关的对象，而无需指定其具体类。</p>
+<p>❓问题描述：假设一下，如果你想要购买一组运动装备，比如一双鞋与一件衬衫这样由两种不同产品组合而成的套装。相信你会想去购买同一品牌的商品，这样商品之间能够互相搭配起来。</p>
+<p>解决方案：首先，抽象工厂模式为系列中的每件产品明确声明接口（例如T恤或者鞋子）。然后，确保所有产品变体都继承这些接口。</p>
+<p>下面是一个抽象工厂接口，它能产生工厂类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">type iSportsFactory interface &#123;</span><br><span class="line">    makeShoe() iShoe</span><br><span class="line">    makeShirt() iShirt</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func getSportsFactory(brand string) (iSportsFactory, error) &#123;</span><br><span class="line">    if brand == &quot;adidas&quot; &#123;</span><br><span class="line">        return &amp;adidas&#123;&#125;, nil</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if brand == &quot;nike&quot; &#123;</span><br><span class="line">        return &amp;nike&#123;&#125;, nil</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return nil, fmt.Errorf(&quot;Wrong brand type passed&quot;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在有一个adidas的工厂：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">type adidas struct &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (a *adidas) makeShoe() iShoe &#123;</span><br><span class="line">    return &amp;adidasShoe&#123;</span><br><span class="line">        shoe: shoe&#123;</span><br><span class="line">            logo: &quot;adidas&quot;,</span><br><span class="line">            size: 14,</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (a *adidas) makeShirt() iShirt &#123;</span><br><span class="line">    return &amp;adidasShirt&#123;</span><br><span class="line">        shirt: shirt&#123;</span><br><span class="line">            logo: &quot;adidas&quot;,</span><br><span class="line">            size: 14,</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>和nike的工厂（略）。</p>
+<p>然后是抽象的产品，它有尺寸和logo两个属性：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">type iShoe interface &#123;</span><br><span class="line">    setLogo(logo string)</span><br><span class="line">    setSize(size int)</span><br><span class="line">    getLogo() string</span><br><span class="line">    getSize() int</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type shoe struct &#123;</span><br><span class="line">    logo string</span><br><span class="line">    size int</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (s *shoe) setLogo(logo string) &#123;</span><br><span class="line">    s.logo = logo</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (s *shoe) getLogo() string &#123;</span><br><span class="line">    return s.logo</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (s *shoe) setSize(size int) &#123;</span><br><span class="line">    s.size = size</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (s *shoe) getSize() int &#123;</span><br><span class="line">    return s.size</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>adidas工厂必须能生产鞋子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">type adidasShoe struct &#123;</span><br><span class="line">    shoe</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>客户端代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">func main() &#123;</span><br><span class="line">    adidasFactory, _ := getSportsFactory(&quot;adidas&quot;)</span><br><span class="line">    nikeFactory, _ := getSportsFactory(&quot;nike&quot;)</span><br><span class="line"></span><br><span class="line">    nikeShoe := nikeFactory.makeShoe()</span><br><span class="line">    nikeShirt := nikeFactory.makeShirt()</span><br><span class="line"></span><br><span class="line">    adidasShoe := adidasFactory.makeShoe()</span><br><span class="line">    adidasShirt := adidasFactory.makeShirt()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>工厂方法模式和抽象工厂模式的区别在于：前者实例化具体的产品，后者实例化具体的工厂，每个工厂再实例化同样的产品系列。</p>
+<h2 id="1-3-单例模式"><a href="#1-3-单例模式" class="headerlink" title="1.3 单例模式"></a>1.3 单例模式</h2><p>单例模式是一种创建型设计模式，一个类仅有一个实例，并提供访问该实例的全局节点。</p>
+<p>❓问题描述：假设一下，如果你想要为你的工程建立一个日志Logger模块，但你只需要全局唯一的日志系统，不希望日志被记录到乱七八糟的位置。</p>
+<p>解决方案：我们需要考虑两个问题：1.如何确保全局唯一，2.如何保证并发控制。</p>
+<p>go里面有sync.Once 方法，能非常优雅的解决这些问题。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">type Logger struct &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var logger *Logger</span><br><span class="line"></span><br><span class="line">var once sync.Once</span><br><span class="line"></span><br><span class="line">func getLoggerInstance() *Logger &#123;</span><br><span class="line">	if logger == nil &#123;</span><br><span class="line">		once.Do(</span><br><span class="line">			func() &#123;</span><br><span class="line">				logger = &amp;Logger&#123;&#125;</span><br><span class="line">			&#125;)</span><br><span class="line">	&#125;</span><br><span class="line">	return logger</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>sync.Once内部原理是使用了一个互斥锁，每次检查该变量有无被分配（是否为nil），只有为nil才初始化实例。</p>
+<h2 id="1-4-生成器模式"><a href="#1-4-生成器模式" class="headerlink" title="1.4 生成器模式"></a>1.4 生成器模式</h2><p>生成器模式允许你分步创建复杂的对象。</p>
+<p>假设你的构造函数有很多参数，那么调用该函数将非常不方便。在C#和python这样支持重载的语言还好，对于go来说就是灾难。</p>
+<p>❓问题描述：假设一下，我们需要在游戏里设计不同的虚拟房屋，每个房子有不同的门和窗户等属性。现在有两种类型的房屋normal和igloo（木制）。</p>
+<p>解决方案：我们需要考虑两个问题：1.如何确保全局唯一，2.如何保证并发控制。</p>
+<p>定义生成器接口：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">type iBuilder interface &#123;</span><br><span class="line">    setWindowType()</span><br><span class="line">    setDoorType()</span><br><span class="line">    setNumFloor()</span><br><span class="line">    getHouse() house</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func getBuilder(builderType string) iBuilder &#123;</span><br><span class="line">    if builderType == &quot;normal&quot; &#123;</span><br><span class="line">        return &amp;normalBuilder&#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if builderType == &quot;igloo&quot; &#123;</span><br><span class="line">        return &amp;iglooBuilder&#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>具体的房屋生成器（以normal为例子）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">type normalBuilder struct &#123;</span><br><span class="line">    windowType string</span><br><span class="line">    doorType   string</span><br><span class="line">    floor      int</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func newNormalBuilder() *normalBuilder &#123;</span><br><span class="line">    return &amp;normalBuilder&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (b *normalBuilder) setWindowType() &#123;</span><br><span class="line">    b.windowType = &quot;Wooden Window&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (b *normalBuilder) setDoorType() &#123;</span><br><span class="line">    b.doorType = &quot;Wooden Door&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (b *normalBuilder) setNumFloor() &#123;</span><br><span class="line">    b.floor = 2</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (b *normalBuilder) getHouse() house &#123;</span><br><span class="line">    return house&#123;</span><br><span class="line">        doorType:   b.doorType,</span><br><span class="line">        windowType: b.windowType,</span><br><span class="line">        floor:      b.floor,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>房屋（产品）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">type house struct &#123;</span><br><span class="line">    windowType string</span><br><span class="line">    doorType   string</span><br><span class="line">    floor      int</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>定义一个主管，他手下有可以修建所有类型房屋的工人。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">type director struct &#123;</span><br><span class="line">    builder iBuilder</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func newDirector(b iBuilder) *director &#123;</span><br><span class="line">    return &amp;director&#123;</span><br><span class="line">        builder: b,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (d *director) setBuilder(b iBuilder) &#123;</span><br><span class="line">    d.builder = b</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (d *director) buildHouse() house &#123;</span><br><span class="line">    d.builder.setDoorType()</span><br><span class="line">    d.builder.setWindowType()</span><br><span class="line">    d.builder.setNumFloor()</span><br><span class="line">    return d.builder.getHouse()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>客户端代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">func main() &#123;</span><br><span class="line">    normalBuilder := getBuilder(&quot;normal&quot;)</span><br><span class="line">    iglooBuilder := getBuilder(&quot;igloo&quot;)</span><br><span class="line"></span><br><span class="line">    director := newDirector(normalBuilder)</span><br><span class="line">    normalHouse := director.buildHouse()</span><br><span class="line"></span><br><span class="line">    fmt.Printf(&quot;Normal House Door Type: %s\n&quot;, normalHouse.doorType)</span><br><span class="line">    fmt.Printf(&quot;Normal House Window Type: %s\n&quot;, normalHouse.windowType)</span><br><span class="line">    fmt.Printf(&quot;Normal House Num Floor: %d\n&quot;, normalHouse.floor)</span><br><span class="line"></span><br><span class="line">    director.setBuilder(iglooBuilder)</span><br><span class="line">    iglooHouse := director.buildHouse()</span><br><span class="line"></span><br><span class="line">    fmt.Printf(&quot;\nIgloo House Door Type: %s\n&quot;, iglooHouse.doorType)</span><br><span class="line">    fmt.Printf(&quot;Igloo House Window Type: %s\n&quot;, iglooHouse.windowType)</span><br><span class="line">    fmt.Printf(&quot;Igloo House Num Floor: %d\n&quot;, iglooHouse.floor)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="1-5-原型模式"><a href="#1-5-原型模式" class="headerlink" title="1.5 原型模式"></a>1.5 原型模式</h2><p>原型模式使你能够复制已有对象，无需使代码依赖它们所属的类。</p>
+<p>❓问题描述：假设一下，你有一个原型，你想复制出一个一模一样的复制品，但不巧的是，类的某些成员（比如登录模块）是私有的。</p>
+<p>解决方案：在原型类实现公共方法clone()能够返回对象的复制。</p>
+<p>让我们尝试通过基于操作系统文件系统的示例来理解原型模式。 操作系统的文件系统是递归的： 文件夹中包含文件和文件夹， 其中又包含文件和文件夹， 以此类推。</p>
+<p>每个文件和文件夹都可用一个 inode接口来表示。 ​ inode接口中同样也有 clone克隆功能。</p>
+<p>file文件和 fold­er文件夹结构体都实现了 print打印和 clone方法， 因为它们都是 inode类型。 同时， 注意 file和 fold­er中的 clone方法。 这两者的 clone方法都会返回相应文件或文件夹的副本。 同时在克隆过程中， 我们会在其名称后面添加 “_clone” 字样。</p>
+<p>原型接口：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">type inode interface &#123;</span><br><span class="line">    print(string)</span><br><span class="line">    clone() inode</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>文件原型：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">type file struct &#123;</span><br><span class="line">    name string</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (f *file) print(indentation string) &#123;</span><br><span class="line">    fmt.Println(indentation + f.name)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (f *file) clone() inode &#123;</span><br><span class="line">    return &amp;file&#123;name: f.name + &quot;_clone&quot;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>文件夹原型：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">type folder struct &#123;</span><br><span class="line">    children []inode</span><br><span class="line">    name      string</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (f *folder) print(indentation string) &#123;</span><br><span class="line">    fmt.Println(indentation + f.name)</span><br><span class="line">    for _, i := range f.children &#123;</span><br><span class="line">        i.print(indentation + indentation)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (f *folder) clone() inode &#123;</span><br><span class="line">    cloneFolder := &amp;folder&#123;name: f.name + &quot;_clone&quot;&#125;</span><br><span class="line">    var tempChildren []inode</span><br><span class="line">    for _, i := range f.children &#123;</span><br><span class="line">        copy := i.clone()</span><br><span class="line">        tempChildren = append(tempChildren, copy)</span><br><span class="line">    &#125;</span><br><span class="line">    cloneFolder.children = tempChildren</span><br><span class="line">    return cloneFolder</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>客户端代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">func main() &#123;</span><br><span class="line">    file1 := &amp;file&#123;name: &quot;File1&quot;&#125;</span><br><span class="line">    file2 := &amp;file&#123;name: &quot;File2&quot;&#125;</span><br><span class="line">    file3 := &amp;file&#123;name: &quot;File3&quot;&#125;</span><br><span class="line"></span><br><span class="line">    folder1 := &amp;folder&#123;</span><br><span class="line">        children: []inode&#123;file1&#125;,</span><br><span class="line">        name:      &quot;Folder1&quot;,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    folder2 := &amp;folder&#123;</span><br><span class="line">        children: []inode&#123;folder1, file2, file3&#125;,</span><br><span class="line">        name:      &quot;Folder2&quot;,</span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Println(&quot;\nPrinting hierarchy for Folder2&quot;)</span><br><span class="line">    folder2.print(&quot;  &quot;)</span><br><span class="line"></span><br><span class="line">    cloneFolder := folder2.clone()</span><br><span class="line">    fmt.Println(&quot;\nPrinting hierarchy for clone Folder&quot;)</span><br><span class="line">    cloneFolder.print(&quot;  &quot;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="1-6-创建型小结"><a href="#1-6-创建型小结" class="headerlink" title="1.6 创建型小结"></a>1.6 创建型小结</h2><ul>
+<li>在许多设计工作的初期都会使用工厂方法模式 （较为简单， 而且可以更方便地通过子类进行定制）， 随后演化为使用抽象工厂模式、 原型模式或生成器模式 （更灵活但更加复杂）。</li>
+<li>生成器重点关注如何分步生成复杂对象。 抽象工厂专门用于生产一系列相关对象。 抽象工厂会马上返回产品， 生成器则允许你在获取产品前执行一些额外构造步骤。</li>
+<li>你可以在创建复杂组合模式树时使用生成器， 因为这可使其构造步骤以递归的方式运行。</li>
+<li>你可以结合使用生成器和桥接模式： 主管类负责抽象工作， 各种不同的生成器负责实现工作。</li>
+<li>抽象工厂、 生成器和原型都可以用单例模式来实现。</li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://hiro-lin.github.io/2023/02/11/go%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="go常用设计模式" target="_blank" rel="external">https://hiro-lin.github.io/2023/02/11/go常用设计模式/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/Hiro-Lin" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/Hiro-Lin" target="_blank"><span class="text-dark">林多鱼</span><small class="ml-1x">游戏开发工程师&amp;后端工程师</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2023/02/11/go%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/" title="go常见面试题"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2023/02/11/MongoDB%E9%9D%A2%E8%AF%95%E9%A2%98/" title="MongoDB面试题"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.jpg" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/Hiro-Lin" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        &copy; 2023 林多鱼
+        
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?6e1453ad1a087bffcfd9ee65e895675e";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</body>
+</html>
