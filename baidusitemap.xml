@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://hiro-lin.github.io//2023/03/07/lua-table-%E7%BB%93%E6%9E%84/</loc>
+    <lastmod>2023-03-07</lastmod>
+  </url>
+  <url>
     <loc>https://hiro-lin.github.io//2023/02/11/go%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/</loc>
-    <lastmod>2023-02-10</lastmod>
+    <lastmod>2023-02-11</lastmod>
   </url>
   <url>
     <loc>https://hiro-lin.github.io//2023/02/11/go%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</loc>
